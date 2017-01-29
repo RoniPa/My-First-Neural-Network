@@ -1,9 +1,13 @@
-#include <iostream>;
-#include <Dense>;
-#include "main.h";
+#include <iostream>
+#include <Eigen/Dense>
+#include "Neurotron.h"
+
+using namespace Eigen;
 
 int main() {
-	std::cout << "Hello world!";
+	Neurotron n;
+	
+	std::cout << n.init_weight(1, 3, 3);
 	std::cin.get();
 	return 0;
 }
