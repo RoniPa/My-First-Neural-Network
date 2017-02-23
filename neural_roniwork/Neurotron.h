@@ -10,6 +10,10 @@ private:
 				CLASS_2 = 0b010,
 				CLASS_3 = 0b100;
 
+	int			m_class_match_count;
+
+	double		m_error;
+
 	MatrixXd	m_net,
 				m_weight,
 				m_bias,
@@ -21,6 +25,7 @@ private:
 	MatrixXd m_activate(MatrixXd m);
 	MatrixXd m_activate_d(MatrixXd m);
 	MatrixXd m_init_weight(double max, int width, int height);
+
 public:
 	Neurotron();
 	void init(int cols, int rows);
@@ -28,6 +33,7 @@ public:
 	void evaluate(MatrixXd input, MatrixXd weight, MatrixXd target_out, MatrixXd target_class, MatrixXd bias);
 };
 
-const double cw_act(double x);
-const double cw_act_deriv(double x);
-const double cw_calc_err(MatrixXd input, MatrixXd target);
+const double	cw_act(double x);
+const double	cw_act_deriv(double x);
+const double	cw_calc_err(MatrixXd input, MatrixXd target);
+const double	calc_matches(MatrixXd input, MatrixXd target);

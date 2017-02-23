@@ -28,9 +28,9 @@ MatrixXd Neurotron::feed_forward(MatrixXd input, MatrixXd weight, MatrixXd bias)
 }
 
 void Neurotron::evaluate(MatrixXd input, MatrixXd weight, MatrixXd target_out, MatrixXd target_class, MatrixXd bias) {
-	double error;
 	m_output = feed_forward(input, weight, bias);
-	error = cw_calc_err(m_output, target_out);
+	m_error = cw_calc_err(m_output, target_out);
+	m_class_match_count = calc_matches(m_output, target_out);
 }
 
 MatrixXd Neurotron::m_init_weight(double max, int rows, int cols) {
@@ -54,4 +54,10 @@ const double cw_calc_err(MatrixXd input, MatrixXd target) {
 	MatrixXd err = input - target;
 	err *= err;
 	return err.sum() / (pow(input_size, 2));
+}
+
+const double calc_matches(MatrixXd input, MatrixXd target) {
+	double class_err_count = 1;
+	// todo: Calculate & normalize class matches
+	return class_err_count;
 }
