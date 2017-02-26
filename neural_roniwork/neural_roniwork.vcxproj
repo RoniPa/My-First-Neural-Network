@@ -126,6 +126,11 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Neurotron.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="iris_test.dat" />
+    <None Include="iris_training.dat" />
+    <None Include="iris_validation.dat" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
