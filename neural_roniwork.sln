@@ -10,6 +10,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "neural_ronitests", "neural_ronitests\neural_ronitests.vcxproj", "{8CCD97B9-4A3F-4999-9A1D-023570169B52}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -26,6 +28,14 @@ Global
 		{A44F4EB1-C269-424A-A1C6-5A21C7D2FBE9}.Release|x64.Build.0 = Release|x64
 		{A44F4EB1-C269-424A-A1C6-5A21C7D2FBE9}.Release|x86.ActiveCfg = Release|Win32
 		{A44F4EB1-C269-424A-A1C6-5A21C7D2FBE9}.Release|x86.Build.0 = Release|Win32
+		{8CCD97B9-4A3F-4999-9A1D-023570169B52}.Debug|x64.ActiveCfg = Debug|x64
+		{8CCD97B9-4A3F-4999-9A1D-023570169B52}.Debug|x64.Build.0 = Debug|x64
+		{8CCD97B9-4A3F-4999-9A1D-023570169B52}.Debug|x86.ActiveCfg = Debug|Win32
+		{8CCD97B9-4A3F-4999-9A1D-023570169B52}.Debug|x86.Build.0 = Debug|Win32
+		{8CCD97B9-4A3F-4999-9A1D-023570169B52}.Release|x64.ActiveCfg = Release|x64
+		{8CCD97B9-4A3F-4999-9A1D-023570169B52}.Release|x64.Build.0 = Release|x64
+		{8CCD97B9-4A3F-4999-9A1D-023570169B52}.Release|x86.ActiveCfg = Release|Win32
+		{8CCD97B9-4A3F-4999-9A1D-023570169B52}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
