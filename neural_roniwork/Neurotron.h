@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Eigen/Dense>
+#include "Types.h"
 
 namespace nrt {
 	using namespace Eigen;
@@ -12,25 +12,24 @@ namespace nrt {
 		const static int VIRGINICA = 0b100; // matches to [0,0,1]
 
 		Neurotron();
-		void init(int cols, int rows);
-		MatrixXd feed_forward(MatrixXd input, MatrixXd weight, MatrixXd bias);
-		void evaluate(MatrixXd input, MatrixXd weight, MatrixXd target_out, MatrixXd target_class, MatrixXd bias);
+		MatrixXd train(TrainSet tr_data, TrainSet vd_data, TrainSet ts_data);
 	private:
-		int m_class_match_count;
-		double m_error;
+		MatrixXd m_biases[3];
+		MatrixXd m_weight;
 
 		MatrixXd m_net;
-		MatrixXd m_weight;
-		MatrixXd m_bias;
 		MatrixXd m_output;
-
 		MatrixXd m_target_out;
 		MatrixXd m_target_class;
+		
+		MatrixXd m_feed_forward(MatrixXd input, MatrixXd weight, MatrixXd bias);
+		NetworkError m_evaluate(MatrixXd input, MatrixXd weight, MatrixXd target_class, MatrixXd bias);
 
 		MatrixXd m_activate(MatrixXd m);
 		MatrixXd m_activate_d(MatrixXd m);
-		MatrixXd m_init_weight(double max, int width, int height);
 		MatrixXd m_backpropagate(MatrixXd input, double eta, MatrixXd bias);
+		MatrixXd m_init_weight(double max, int width, int height);
+		MatrixXd* m_init_biases(MatrixXd tr_data, MatrixXd vd_data, MatrixXd ts_data);
 	};
 
 	const double	cw_act(double x);

@@ -109,6 +109,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>O:\Projects\VisualStudio2015\libs\eigen-eigen-67e894c6cd8f;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -119,6 +120,7 @@
     <ClInclude Include="Neurotron.h" />
     <ClInclude Include="NeurotronDataset.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Types.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="neural_roniwork.rc" />

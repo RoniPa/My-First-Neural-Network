@@ -3,20 +3,39 @@
 
 namespace nrt {
 
-	MatrixXd NeurotronDataset::m_convert_to_matrix(int cols, int rows, std::vector<std::vector<double>> raw_data) {
+	template<typename T>
+	MatrixXd convert_to_matrix(int rows, int cols, std::vector<std::vector<T>> raw_data) {
+		static_assert(std::is_arithmetic<T>::value, "NumericType must be numeric");
+
 		MatrixXd output(rows, cols);
 
-		for (std::vector<std::vector<double>>::const_iterator i = raw_data.begin(); i != raw_data.end(); ++i) {
+		for (std::vector<std::vector<T>>::const_iterator i = raw_data.begin(); i != raw_data.end(); ++i) {
 			int curr_row = i - raw_data.begin();
-			for (std::vector<double>::const_iterator j = i->begin(); j != i->end(); ++j)
+			for (std::vector<T>::const_iterator j = i->begin(); j != i->end(); ++j)
 				output(curr_row, j - i->begin()) = *j;
 		}
 
 		return output;
 	}
 
-	MatrixXd NeurotronDataset::read_data(std::string f_uri) {
-		std::vector<std::vector<double>> training_data;
+	template<typename T>
+	MatrixXd convert_to_matrix(int rows, int cols, std::vector<T> raw_data) {
+		static_assert(std::is_arithmetic<T>::value, "NumericType must be numeric");
+
+		MatrixXd output(rows, cols);
+
+		for (std::vector<T>::const_iterator i = raw_data.begin(); i != raw_data.end(); ++i) {
+			int curr_row = i - raw_data.begin();
+			output(curr_row, 0) = *i;
+		}
+
+		return output;
+	}
+
+	TrainSet NeurotronDataset::read_data(std::string f_uri) {
+		std::vector<std::vector<double>> data;
+		std::vector<int> target;
+
 		std::ifstream infile(f_uri);
 
 		int rows(0), cols(0);
@@ -46,11 +65,13 @@ namespace nrt {
 					else if (s.compare("Iris-virginica") == 0) {
 						value = Neurotron::VIRGINICA;
 					}
+					target.push_back((int)value);
+				} else {
+					record.push_back(value);
+					++cols;
 				}
-				record.push_back(value);
-				++cols;
 			}
-			training_data.push_back(record);
+			data.push_back(record);
 			++rows;
 		}
 		cols /= rows;
@@ -60,6 +81,10 @@ namespace nrt {
 		if (!infile.eof()) throw "Fooey!\n";
 
 		infile.close();
-		return m_convert_to_matrix(cols, rows, training_data);
+
+		TrainSet result;
+		result.values = convert_to_matrix<double>(rows, cols, data);
+		result.targets = convert_to_matrix<int>(rows, 1, target);
+		return result;
 	}
 }

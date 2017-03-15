@@ -3,20 +3,83 @@
 #include <math.h>
 #include <iostream>
 
+#if defined(DEBUG) || defined(_DEBUG)
+# define D(x) x
+#else
+# define D(x)
+#endif // DEBUG
+
 namespace nrt {
 
 	Neurotron::Neurotron() {}
 
-	void Neurotron::init(int rows, int cols) 
+	// Train network with given data sets
+	//
+	// @param	tr_data		Training data set
+	// @param	vd_data		Validation data set
+	// @param	ts_data		Test data set
+	//
+	MatrixXd Neurotron::train(TrainSet tr_data, TrainSet vd_data, TrainSet ts_data)
 	{
-		m_init_weight(1, rows, cols);
-		m_bias = MatrixXd::Constant(1, cols, 1);
-		std::cout << "weights=" << std::endl << m_weight << std::endl
-			<< "bias=" << std::endl << m_bias;
+		m_init_weight(0.5, tr_data.values.rows() + 1, tr_data.values.cols());
+		m_init_biases(tr_data.values, vd_data.values, ts_data.values);
 
-		NeurotronDataset dr;
-		MatrixXd data = dr.read_data("iris_training.dat");
-		std::cout << data;
+		D(
+			double tr_err[500];
+			double tr_class_err[500];
+			double vd_err[500];
+			double vd_class_err[500];
+			double ts_err[500];
+			double ts_class_err[500];
+		)
+
+		// Iterate
+		int i = 0;
+		while (i < 500) {
+			m_weight = m_backpropagate(tr_data.values, 0.1, m_biases[0]);
+			
+			D(
+				NetworkError err1 = m_evaluate(tr_data.values, m_weight, tr_data.targets, m_biases[0]);
+				NetworkError err2 = m_evaluate(vd_data.values, m_weight, vd_data.targets, m_biases[1]);
+				NetworkError err3 = m_evaluate(ts_data.values, m_weight, ts_data.targets, m_biases[2]);
+
+				tr_err[i] = err1.error;
+				tr_class_err[i] = err1.classError;
+				vd_err[i] = err2.error;
+				vd_class_err[i] = err2.classError;
+				ts_err[i] = err3.error;
+				ts_class_err[i] = err3.classError;
+			)
+
+			i++;
+		}
+
+		D(
+			NetworkError err1 = m_evaluate(tr_data.values, m_weight, tr_data.targets, m_biases[0]);
+			NetworkError err2 = m_evaluate(vd_data.values, m_weight, vd_data.targets, m_biases[1]);
+			NetworkError err3 = m_evaluate(ts_data.values, m_weight, ts_data.targets, m_biases[2]);
+
+			tr_err[i] = err1.error;
+			tr_class_err[i] = err1.classError;
+			vd_err[i] = err2.error;
+			vd_class_err[i] = err2.classError;
+			ts_err[i] = err3.error;
+			ts_class_err[i] = err3.classError;
+		)
+
+		for (int i = 0; i < 500; i++) {
+			std::cout << tr_err[i];
+		}
+
+		return m_weight;
+	}
+
+	MatrixXd* Neurotron::m_init_biases(MatrixXd tr_data, MatrixXd vd_data, MatrixXd ts_data)
+	{	
+		m_biases[0] = MatrixXd::Constant(tr_data.rows(), 1, 1);	// training
+		m_biases[1] = MatrixXd::Constant(vd_data.rows(), 1, 1); // validation
+		m_biases[2] = MatrixXd::Constant(ts_data.rows(), 1, 1); // test
+		return m_biases;
 	}
 
 	MatrixXd Neurotron::m_activate(MatrixXd m) 
@@ -38,26 +101,36 @@ namespace nrt {
 		return m_weight;
 	}
 
-	// Return updated weight matrix
+	// Backpropagation
+	//
+	// @param	input		Input data matrix (MatrixXd)
+	// @param	eta			Learning rate
+	// @param	bias		Bias matrix (MatrixXd)
+	//
+	// @return	Updated weight matrix
+	//
 	MatrixXd Neurotron::m_backpropagate(MatrixXd input, double eta, MatrixXd bias) 
 	{
 		return m_weight;
 	}
 
-	MatrixXd Neurotron::feed_forward(MatrixXd input, MatrixXd weight, MatrixXd bias) 
+	MatrixXd Neurotron::m_feed_forward(MatrixXd input, MatrixXd weight, MatrixXd bias)
 	{
 		MatrixXd hc(input.rows(), input.cols() + bias.cols());
 		hc << input, bias;
-		m_net = weight*hc;
+		//m_net = weight*hc; <-- todo: these can't be multiplied
+		std::cout << m_activate(m_net);
 		m_output = m_activate(m_net);
 		return m_output;
 	}
 
-	void Neurotron::evaluate(MatrixXd input, MatrixXd weight, MatrixXd target_out, MatrixXd target_class, MatrixXd bias) 
+	NetworkError Neurotron::m_evaluate(MatrixXd input, MatrixXd weight, MatrixXd target_class, MatrixXd bias)
 	{
-		m_output = feed_forward(input, weight, bias);
-		m_error = calc_err(m_output, target_out);
-		m_class_match_count = count_match_err(m_output, target_class);
+		NetworkError error;
+		m_output = m_feed_forward(input, weight, bias);
+		error.error = calc_err(m_output, target_class);
+		error.classError = count_match_err(m_output, target_class);
+		return error;
 	}
 
 	// ------------- Helper functions ------------- //
@@ -94,9 +167,16 @@ namespace nrt {
 		return m;
 	}
 
-	inline const double calc_err(MatrixXd input, MatrixXd target) 
+	inline const double calc_err(MatrixXd input, MatrixXd target_classes) 
 	{
 		int input_size = (int)(input.rows() * input.cols());
+		int row_count = (int)target_classes.rows();
+		MatrixXd target(row_count, 3);
+
+		for (int i = row_count - 1; i >= 0; i--) {
+			target.row(i) = rw_convert_from_class(target_classes(i, 0));
+		}
+
 		MatrixXd err = input - target;
 		err *= err;
 		return err.sum() / (pow(input_size, 2));
