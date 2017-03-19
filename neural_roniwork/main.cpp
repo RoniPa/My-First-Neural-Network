@@ -1,19 +1,18 @@
-#include <Eigen/Dense>
-#include "Neurotron.h"
-#include "NeurotronDataset.h"
-
-#include <iostream>
+#include "DataReader.h"
+#include "NeuralNetwork.h"
+#include "NeuralNetworkTrainer.h"
 
 using namespace nrt;
 
 int main() {
+	DataReader dr;
+	DataSet data = dr.readData(
+		"iris_training.dat", "iris_validation.dat", "iris_test.dat");
 
-	Neurotron n;
-	NeurotronDataset dr;
-	TrainSet tr_data = dr.read_data("iris_training.dat");
-	TrainSet vd_data = dr.read_data("iris_validation.dat");
-	TrainSet ts_data = dr.read_data("iris_test.dat");
-	n.train(tr_data, vd_data, ts_data);
+	NeuralNetwork nn(4, 4, 3);
+	NeuralNetworkTrainer nT(&nn);
+
+	std::cout << data.training.values << data.training.targets;
 
 	std::cin.get();
 	return 0;

@@ -117,23 +117,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Neurotron.h" />
-    <ClInclude Include="NeurotronDataset.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="Types.h" />
-  </ItemGroup>
-  <ItemGroup>
     <ResourceCompile Include="neural_roniwork.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DataReader.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Neurotron.cpp" />
-    <ClCompile Include="NeurotronDataset.cpp" />
+    <ClCompile Include="NeuralNetwork.cpp" />
+    <ClCompile Include="NeuralNetworkTrainer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="iris_test.dat" />
     <None Include="iris_training.dat" />
     <None Include="iris_validation.dat" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DataReader.h" />
+    <ClInclude Include="NeuralNetwork.h" />
+    <ClInclude Include="NeuralNetworkTrainer.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="Types.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

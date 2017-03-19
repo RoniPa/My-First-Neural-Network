@@ -1,22 +1,20 @@
 #pragma once
 
-#include <Eigen/Dense>
+#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <vector>
-
 #include "Types.h"
-#include "Neurotron.h"
 
 namespace nrt {
+	using namespace Eigen;
 
-	class NeurotronDataset {
-	private:
-		int m_input_count; // counted from data
-		int m_output_count{ 3 };
+	class DataReader {
 	public:
-		TrainSet read_data(std::string f_uri);
+		DataSet readData(std::string train_uri,std::string val_uri,std::string test_uri);
+	private:
+		SingleSet readSingle(std::string f_uri);
 	};
 
 	template<typename T = typename std::enable_if<std::is_arithmetic<T>::value, T>::type>
