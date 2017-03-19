@@ -18,6 +18,7 @@ namespace nrt {
 		void trainNetwork(DataSet* tSet);
 	private:
 		NeuralNetwork* m_nn;
+		DataSet* m_tSet;
 
 		//learning parameters
 		double m_learningRate; // adjusts the step size of the weight update	
@@ -29,5 +30,7 @@ namespace nrt {
 
 		//accuracy/MSE required
 		double m_desiredAccuracy;
+
+		void m_runTrainingEpoch(SingleSet eSet);
 	};
 }

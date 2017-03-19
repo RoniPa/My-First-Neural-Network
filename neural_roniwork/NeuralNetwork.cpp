@@ -4,9 +4,9 @@
 namespace nrt {
 	// Constructor
 	NeuralNetwork::NeuralNetwork(int nI, int nH, int nO) :
-		m_input(nI),
-		m_hidden(nH), 
-		m_output(nO)
+		m_input{ nI },
+		m_hidden{ nH },
+		m_output{ nO }
 	{
 		// Initialize values to 0, 
 		// add bias column to end with value 1
@@ -36,6 +36,16 @@ namespace nrt {
 	int NeuralNetwork::hiddens() { return m_hidden; }
 	int NeuralNetwork::outputs() { return m_output; }
 
+	void NeuralNetwork::feedForward(double* pattern)
+	{
+
+	}
+
+	void NeuralNetwork::backpropagate()
+	{
+
+	}
+
 	// Neutron activation function
 	double NeuralNetwork::activate(double x)
 	{
@@ -61,7 +71,7 @@ namespace nrt {
 	// Conversion from class to raw value vector
 	double* NeuralNetwork::class_to_output(int x)
 	{
-		double output[3];
+		double* output = new double[3];
 		for (int i = 2; i >= 0; i--) {
 			output[i] = x >> 1;
 		}

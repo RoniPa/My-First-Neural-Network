@@ -11,8 +11,7 @@ int main() {
 
 	NeuralNetwork nn(4, 4, 3);
 	NeuralNetworkTrainer nT(&nn);
-
-	std::cout << data.training.values << data.training.targets;
+	nT.trainNetwork(&data);
 
 	std::cin.get();
 	return 0;

@@ -13,6 +13,9 @@ namespace nrt {
 		int inputs();
 		int hiddens();
 		int outputs();
+
+		void feedForward(double* pattern);
+		void backpropagate();
 	private:
 		int m_input;
 		int m_hidden;
