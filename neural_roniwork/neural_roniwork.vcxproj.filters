@@ -30,6 +30,9 @@
     <ClCompile Include="NeuralNetworkTrainer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Neuron.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="iris_training.dat">
@@ -61,6 +64,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="NeuralNetworkTrainer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Neuron.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

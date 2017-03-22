@@ -1,34 +1,26 @@
 #pragma once
 
+#include <vector>
+#include <iostream>
+#include <cassert>
 #include <Eigen/Dense>
+#include "Neuron.h"
 
 namespace nrt {
-	using namespace Eigen;
-
-	class NeuralNetwork {
+	class NeuralNetwork
+	{
 	public:
-		NeuralNetwork(int nI, int nH, int nO);
-		~NeuralNetwork();
+		NeuralNetwork(const std::vector<unsigned> &topology);
+		void feedForward(const std::vector<double> &inputVals);
+		void backProp(const std::vector<double> &targetVals);
+		void getResults(std::vector<double> &resultVals) const;
+		double getError() const { return m_error; };
 
-		int inputs();
-		int hiddens();
-		int outputs();
-
-		void feedForward(double* pattern);
-		void backpropagate();
 	private:
-		int m_input;
-		int m_hidden;
-		int m_output;
-
-		double* m_inputNeurons;
-		double* m_hiddenNeurons;
-		double* m_outputNeurons;
-
-		double activate(double x);
-		double activate_deriv(double x);
-
-		unsigned int output_to_class(double* output);
-		double* class_to_output(int x);
+		std::vector<Layer> m_layers; // m_layers[layerNum][neuronNum]
+		double m_error;
+		double m_recentAverageError;
+		double m_recentAverageSmoothingFactor;
 	};
+
 }

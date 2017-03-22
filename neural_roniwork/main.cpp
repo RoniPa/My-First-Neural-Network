@@ -1,3 +1,6 @@
+#include <vector>
+#include <iostream>
+
 #include "DataReader.h"
 #include "NeuralNetwork.h"
 #include "NeuralNetworkTrainer.h"
@@ -9,9 +12,10 @@ int main() {
 	DataSet data = dr.readData(
 		"iris_training.dat", "iris_validation.dat", "iris_test.dat");
 
-	NeuralNetwork nn(4, 4, 3);
+	std::vector<unsigned> netTopology {4, 4, 3};
+	NeuralNetwork nn(netTopology);
 	NeuralNetworkTrainer nT(&nn);
-	nT.trainNetwork(&data);
+	nT.trainNeuralNetwork(&data);
 
 	std::cin.get();
 	return 0;

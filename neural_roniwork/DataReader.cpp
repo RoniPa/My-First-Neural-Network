@@ -8,13 +8,16 @@ namespace nrt {
 		result.training = readSingle(train_uri);
 		result.validation = readSingle(val_uri);
 		result.test = readSingle(test_uri);
+
+		result.inputCount = 4;
+		result.outputCount = 3;
 		return result;
 	}
 
 	SingleSet DataReader::readSingle(std::string f_uri)
 	{
 		std::vector<std::vector<double>> data;
-		std::vector<int> target;
+		std::vector<std::vector<double>> target;
 
 		std::ifstream infile(f_uri);
 
@@ -45,7 +48,7 @@ namespace nrt {
 					else if (s.compare("Iris-virginica") == 0) {
 						value = DataSet::VIRGINICA;
 					}
-					target.push_back((int)value);
+					target.push_back(convert_from_class(value));
 				}
 				else {
 					record.push_back(value);
@@ -64,7 +67,7 @@ namespace nrt {
 		SingleSet result;
 		result.dataCount = rows - 1;
 		result.values = convert_to_matrix<double>(rows, cols, data);
-		result.targets = convert_to_matrix<int>(rows, 1, target);
+		result.targets = convert_to_matrix<double>(rows, cols, target);
 		return result;
 	}
 
@@ -83,17 +86,25 @@ namespace nrt {
 		return output;
 	}
 
-	template<typename T>
-	MatrixXd convert_to_matrix(int rows, int cols, std::vector<T> raw_data) {
-		static_assert(std::is_arithmetic<T>::value, "NumericType must be numeric");
-
-		MatrixXd output(rows, cols);
-
-		for (std::vector<T>::const_iterator i = raw_data.begin(); i != raw_data.end(); ++i) {
-			int curr_row = i - raw_data.begin();
-			output(curr_row, 0) = *i;
+	// Conversion from raw value vector to class
+	int DataReader::convert_to_class(const std::vector<double> output)
+	{
+		double curr_max = 0;
+		int max_ind = 0;
+		for (int i = output.size() - 1; i >= 0; i--) {
+			if (curr_max < output[i]) max_ind = i;
 		}
 
-		return output;
+		return max_ind == 2 ? 0b001 : max_ind == 1 ? 0b010 : 0b100;
+	}
+
+	// Conversion from class to raw value vector
+	std::vector<double> DataReader::convert_from_class(unsigned x)
+	{
+		std::vector<double> m;
+		for (int i = 2; i >= 0; i--) {
+			m.push_back((x >> i) & 0b001);
+		}
+		return m;
 	}
 }

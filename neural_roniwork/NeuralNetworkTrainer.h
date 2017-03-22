@@ -5,8 +5,6 @@
 #include <iostream>
 
 // Set defaults
-#define LEARNING_RATE 0.001
-#define MOMENTUM 0.9
 #define MAX_EPOCHS 1500
 #define DESIRED_ACCURACY 90  
 #define DESIRED_MSE 0.001 
@@ -15,7 +13,7 @@ namespace nrt {
 	class NeuralNetworkTrainer {
 	public:
 		NeuralNetworkTrainer(NeuralNetwork* nn);
-		void trainNetwork(DataSet* tSet);
+		void trainNeuralNetwork(DataSet* tSet);
 	private:
 		NeuralNetwork* m_nn;
 		DataSet* m_tSet;
@@ -31,6 +29,6 @@ namespace nrt {
 		//accuracy/MSE required
 		double m_desiredAccuracy;
 
-		void m_runTrainingEpoch(SingleSet eSet);
+		void m_runTrainingEpoch(const SingleSet &eSet);
 	};
 }

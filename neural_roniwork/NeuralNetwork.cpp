@@ -1,80 +1,92 @@
 #include "NeuralNetwork.h"
-#include <algorithm>
 
 namespace nrt {
-	// Constructor
-	NeuralNetwork::NeuralNetwork(int nI, int nH, int nO) :
-		m_input{ nI },
-		m_hidden{ nH },
-		m_output{ nO }
+	using namespace Eigen;
+
+	void NeuralNetwork::getResults(std::vector<double> &resultVals) const
 	{
-		// Initialize values to 0, 
-		// add bias column to end with value 1
-
-		m_inputNeurons = new double[m_input + 1];
-		std::fill_n(m_inputNeurons, m_input, 0);
-		m_inputNeurons[m_input] = 1;
-
-		m_hiddenNeurons = new double[m_hidden + 1];
-		std::fill_n(m_hiddenNeurons, m_hidden, 0);
-		m_inputNeurons[m_hidden] = 1;
-
-		m_outputNeurons = new double[m_output + 1];
-		std::fill_n(m_outputNeurons, m_output, 0);
-		m_inputNeurons[m_output] = 1;
-	}
-
-	// Destructor
-	NeuralNetwork::~NeuralNetwork() 
-	{
-		delete[] m_inputNeurons;
-		delete[] m_hiddenNeurons;
-		delete[] m_outputNeurons;
-	}
-
-	int NeuralNetwork::inputs() { return m_input; }
-	int NeuralNetwork::hiddens() { return m_hidden; }
-	int NeuralNetwork::outputs() { return m_output; }
-
-	void NeuralNetwork::feedForward(double* pattern)
-	{
-
-	}
-
-	void NeuralNetwork::backpropagate()
-	{
-
-	}
-
-	// Neutron activation function
-	double NeuralNetwork::activate(double x)
-	{
-		// hyperbolic tangent function
-		return (tanh(x) + 1) / 2;
-	}
-
-	double NeuralNetwork::activate_deriv(double x)
-	{
-		return (1 - pow(tanh(x), 2)) / 2;
-	}
-
-	// Conversion from raw value vector to class
-	unsigned int NeuralNetwork::output_to_class(double* output)
-	{
-		int c = 0;
-		for (int i = 2; i >= 0; i--) {
-			c = c | ((int)output[i] << i);
+		for (unsigned n = 0; n < m_layers.back().size() - 1; ++n) {
+			resultVals[n] = m_layers.back()[n].getOutputVal();
 		}
-		return c;
 	}
 
-	// Conversion from class to raw value vector
-	double* NeuralNetwork::class_to_output(int x)
+	void NeuralNetwork::backProp(const std::vector<double> &targetVals)
 	{
-		double* output = new double[3];
-		for (int i = 2; i >= 0; i--) {
-			output[i] = x >> 1;
+		// Calculate overall NeuralNetwork error (RMS of output neuron errors)
+		Layer &outputLayer = m_layers.back();
+		m_error = 0.0;
+
+		for (unsigned n = 0; n < outputLayer.size() - 1; ++n) {
+			double delta = targetVals[n] - outputLayer[n].getOutputVal();
+			m_error += delta * delta;
 		}
-		return output;
+		m_error /= outputLayer.size() - 1; // Squared average error
+		m_error = sqrt(m_error); // RMS (Root mean square)
+
+								 // Recent average measurement
+		m_recentAverageError =
+			(m_recentAverageError * m_recentAverageSmoothingFactor + m_error)
+			/ (m_recentAverageSmoothingFactor + 1.0);
+
+		// Calculate output layer gradients
+		for (unsigned n = 0; n < outputLayer.size() - 1; ++n) {
+			outputLayer[n].calcOutputGradients(targetVals[n]);
+		}
+
+		// Calculate gradients on hidden layers
+		for (unsigned layerNum = m_layers.size() - 2; layerNum > 0; --layerNum) {
+			Layer &hiddenLayer = m_layers[layerNum];
+			Layer &nextLayer = m_layers[layerNum + 1];
+
+			for (unsigned n = 0; n < hiddenLayer.size(); ++n) {
+				hiddenLayer[n].calcHiddenGradients(nextLayer);
+			}
+		}
+
+		// For all layers from outputs to first hidden layer, update weights
+		for (unsigned layerNum = m_layers.size() - 1; layerNum > 0; --layerNum) {
+			Layer &layer = m_layers[layerNum];
+			Layer &prevLayer = m_layers[layerNum - 1];
+
+			for (unsigned n = 0; n < layer.size() - 1; ++n) {
+				layer[n].updateInputWeights(prevLayer);
+			}
+		}
+	}
+
+	void NeuralNetwork::feedForward(const std::vector<double> &inputVals)
+	{
+		assert(inputVals.size() == m_layers[0].size() - 1);
+
+		// Assign the input values into the input neurons
+		for (unsigned i = 0; i < inputVals.size(); ++i) {
+			m_layers[0][i].setOutputVal(inputVals[i]);
+		}
+
+		// Forward propagate
+		for (unsigned layerNum = 1; layerNum < m_layers.size(); ++layerNum) {
+			for (unsigned n = 0; n < m_layers[layerNum].size() - 1; ++n) {
+				Layer &prevLayer = m_layers[layerNum - 1];
+				m_layers[layerNum][n].activate(prevLayer);
+			}
+		}
+	}
+
+	NeuralNetwork::NeuralNetwork(const std::vector<unsigned> &topology)
+	{
+		unsigned numLayers = topology.size();
+		for (unsigned layerNum = 0; layerNum < numLayers; ++layerNum) {
+			m_layers.push_back(Layer());
+			unsigned numOutputs = (layerNum == topology.size() - 1) ? 0 : topology[layerNum + 1];
+
+			// Add neurons to layer, and bias neuron
+			for (unsigned neuronNum = 0; neuronNum <= topology[layerNum]; ++neuronNum) {
+				m_layers.back().push_back(Neuron(numOutputs, neuronNum));
+				std::cout << "Neuron created" << std::endl;
+			}
+
+			// Force bias node's output value to 1.0
+			m_layers.back().back().setOutputVal(1.0);
+		}
 	}
 }
