@@ -20,31 +20,41 @@ namespace nrt {
 
 		m_epoch = 0;
 
-		int initial_err_count = m_runValidationEpoch(tData->validation);
-		int initial_error = m_nn->getError();
-		
-		while (m_epoch < 1500) { ++m_epoch;
+		int initial_err_count = m_runValidationEpoch(tData->test);
+		double initial_error = m_nn->getError();
+
+		int err1, err2;
+		double accuracy;
+		do { ++m_epoch;
 			std::cout << "Epoch " << m_epoch << std::endl;
-			m_runTrainingEpoch(tData->training);
-			m_runTrainingEpoch(tData->test);
-		}
+			err1 = m_runTrainingEpoch(tData->training);
+			err2 = m_runTrainingEpoch(tData->validation);
+
+			accuracy = ((double)err1 + (double)err2) /
+				((double)tData->training.dataCount + (double)tData->validation.dataCount)
+				* 100;
+		} while (
+			m_epoch < MAX_EPOCHS && 
+			m_nn->getError() > DESIRED_MSE &&
+			accuracy < DESIRED_ACCURACY
+		);
 
 		std::cout << "\n\nINITIAL RESULTS WITH VALIDATION DATA\n------------------------------\n";
 		std::cout << "AVG. NET DIFF: " << initial_error
 			<< " CLASS VALIDATION ERRORS: "
-			<< (int)((double)initial_err_count / (double)(tData->validation).dataCount * 100) << " %, "
+			<< (int)((double)initial_err_count / (double)(tData->test).dataCount * 100) << " %, "
 			<< initial_err_count << " ptc" << std::endl;
 				
-		int end_err_count = m_runValidationEpoch(tData->validation);
+		int end_err_count = m_runValidationEpoch(tData->test);
 		std::cout << "\n\nEND RESULTS WITH VALIDATION DATA\n------------------------------\n";
 		std::cout << "AVG. NET DIFF: " << m_nn->getError()
 			<< " CLASS VALIDATION ERRORS: "
-			<< (int)((double)end_err_count / (double)(tData->validation).dataCount * 100) << " %, "
+			<< (int)((double)end_err_count / (double)(tData->test).dataCount * 100) << " %, "
 			<< end_err_count << " ptc" << std::endl;
 	}
 
 	int myrandom(int i) { return std::rand() % i; }
-	void NeuralNetworkTrainer::m_runTrainingEpoch(const SingleSet &eSet)
+	int NeuralNetworkTrainer::m_runTrainingEpoch(const SingleSet &eSet)
 	{
 		int err_count = 0;
 		std::vector<double> resultVals(3);
@@ -77,6 +87,8 @@ namespace nrt {
 		std::cout << "AVG. NET DIFF: " << m_nn->getError() 
 			<< " CLASS VALIDATION ERRORS: " 
 			<< (int)((double)err_count/(double)eSet.dataCount*100) << " %" << std::endl;
+
+		return err_count;
 	}
 
 	int NeuralNetworkTrainer::m_runValidationEpoch(const SingleSet &eSet)

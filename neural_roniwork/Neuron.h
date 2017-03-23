@@ -30,7 +30,7 @@ namespace nrt {
 	private:
 		static double activationFunc(double x);
 		static double activationFuncDerivative(double x);
-		static double randomWeight(void) { return rand() / double(RAND_MAX); }
+		static double randomWeight(void) { return rand() / (double(RAND_MAX)*2); } // [-0.5 ... 0.5]
 		double sumDOW(const Layer &nextLayer) const;
 		double m_outputVal;
 		unsigned m_myIndex; // Neuron index in layer

@@ -9,7 +9,7 @@
 // Set defaults
 #define MAX_EPOCHS 1500
 #define DESIRED_ACCURACY 90  
-#define DESIRED_MSE 0.001 
+#define DESIRED_MSE 0.008
 
 namespace nrt {
 	class NeuralNetworkTrainer {
@@ -31,7 +31,7 @@ namespace nrt {
 		//accuracy/MSE required
 		double m_desiredAccuracy;
 
-		void m_runTrainingEpoch(const SingleSet &eSet);
+		int m_runTrainingEpoch(const SingleSet &eSet);
 		int m_runValidationEpoch(const SingleSet &eSet);
 	};
 }
