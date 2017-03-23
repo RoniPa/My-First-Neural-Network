@@ -1,5 +1,7 @@
 #include "NeuralNetwork.h"
 
+#define BIAS 1.0
+
 namespace nrt {
 	using namespace Eigen;
 
@@ -23,7 +25,7 @@ namespace nrt {
 		m_error /= outputLayer.size() - 1; // Squared average error
 		m_error = sqrt(m_error); // RMS (Root mean square)
 
-								 // Recent average measurement
+		// Recent average measurement
 		m_recentAverageError =
 			(m_recentAverageError * m_recentAverageSmoothingFactor + m_error)
 			/ (m_recentAverageSmoothingFactor + 1.0);
@@ -85,8 +87,8 @@ namespace nrt {
 				std::cout << "Neuron created" << std::endl;
 			}
 
-			// Force bias node's output value to 1.0
-			m_layers.back().back().setOutputVal(1.0);
+			// Force bias node's output value to constant
+			m_layers.back().back().setOutputVal(BIAS);
 		}
 	}
 }

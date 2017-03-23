@@ -1,7 +1,7 @@
 #include "Neuron.h"
 
 #define LEARNING_RATE 0.015
-#define MOMENTUM 0.5
+#define MOMENTUM 0.2
 
 namespace nrt {
 
@@ -18,11 +18,11 @@ namespace nrt {
 
 			double newDeltaWeight =
 				// Individual input, magnified by the gradient and learning rate:
-				eta
+				Neuron::eta
 				* neuron.getOutputVal()
 				* m_gradient
 				// Also add momentum = a fraction of the previous delta weight
-				+ alpha
+				+ Neuron::alpha
 				* oldDeltaWeight;
 
 			neuron.m_outputWeights[m_myIndex].deltaWeight = newDeltaWeight;

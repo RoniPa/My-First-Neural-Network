@@ -1,14 +1,15 @@
 #pragma once
 
 #include <Eigen/Dense>
+#include <vector>
 
 namespace nrt {
 	using namespace Eigen;
 
 	struct SingleSet {
 		unsigned int dataCount;
-		MatrixXd values;
-		MatrixXd targets;
+		std::vector<std::vector<double>> values;
+		std::vector<std::vector<double>> targets;
 	};
 
 	struct DataSet {

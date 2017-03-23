@@ -19,45 +19,89 @@ namespace nrt {
 			<< "==========================================================================" << std::endl << std::endl;
 
 		m_epoch = 0;
+
+		int initial_err_count = m_runValidationEpoch(tData->validation);
+		int initial_error = m_nn->getError();
 		
-		while (m_epoch < 100) { ++m_epoch;
+		while (m_epoch < 1500) { ++m_epoch;
+			std::cout << "Epoch " << m_epoch << std::endl;
 			m_runTrainingEpoch(tData->training);
+			m_runTrainingEpoch(tData->test);
 		}
+
+		std::cout << "\n\nINITIAL RESULTS WITH VALIDATION DATA\n------------------------------\n";
+		std::cout << "AVG. NET DIFF: " << initial_error
+			<< " CLASS VALIDATION ERRORS: "
+			<< (int)((double)initial_err_count / (double)(tData->validation).dataCount * 100) << " %, "
+			<< initial_err_count << " ptc" << std::endl;
+				
+		int end_err_count = m_runValidationEpoch(tData->validation);
+		std::cout << "\n\nEND RESULTS WITH VALIDATION DATA\n------------------------------\n";
+		std::cout << "AVG. NET DIFF: " << m_nn->getError()
+			<< " CLASS VALIDATION ERRORS: "
+			<< (int)((double)end_err_count / (double)(tData->validation).dataCount * 100) << " %, "
+			<< end_err_count << " ptc" << std::endl;
 	}
 
+	int myrandom(int i) { return std::rand() % i; }
 	void NeuralNetworkTrainer::m_runTrainingEpoch(const SingleSet &eSet)
 	{
 		int err_count = 0;
-
-		std::cout << "Epoch " << m_epoch << std::endl;
-
 		std::vector<double> resultVals(3);
-		for (unsigned i = 0; i < eSet.dataCount; ++i) {
-			std::vector<double> inputVals {
-				eSet.values(i, 0),
-				eSet.values(i, 1),
-				eSet.values(i, 2),
-				eSet.values(i, 3)
-			};
-			m_nn->feedForward(inputVals);
 
-			std::vector<double> targetVals {
-				eSet.targets(i, 0),
-				eSet.targets(i, 1),
-				eSet.targets(i, 2)
-			};
-			m_nn->backProp(targetVals);
+		// Randomize data sets
+		std::vector<int> indexes;
+		indexes.reserve(eSet.values.size());
+		for (int i = 0; i < eSet.values.size(); ++i)
+			indexes.push_back(i);
+		std::random_shuffle(indexes.begin(), indexes.end(), myrandom);
+
+		for (std::vector<int>::iterator it1 = indexes.begin(); it1 != indexes.end(); ++it1) {
+			m_nn->feedForward(eSet.values[*it1]);
+			m_nn->backProp(eSet.targets[*it1]);
 			m_nn->getResults(resultVals);
 
-			int targetClass = DataReader::convert_to_class(targetVals);
+			int targetClass = DataReader::convert_to_class(eSet.targets[*it1]);
 			int result = DataReader::convert_to_class(resultVals);
-			if (targetClass != result) ++err_count;
-			
-			//std::cout << "target: " << targetClass << ", result: " << result << "\n";
+			if (targetClass != result) {
+				++err_count;
+
+				std::cout << "target: " << targetClass << ", result: " << result;
+				std::cout << ", output values:"
+					<< resultVals[0] << ", "
+					<< resultVals[1] << ", "
+					<< resultVals[2] << std::endl;
+			}
 		}
 		
 		std::cout << "AVG. NET DIFF: " << m_nn->getError() 
 			<< " CLASS VALIDATION ERRORS: " 
 			<< (int)((double)err_count/(double)eSet.dataCount*100) << " %" << std::endl;
+	}
+
+	int NeuralNetworkTrainer::m_runValidationEpoch(const SingleSet &eSet)
+	{
+		int err_count = 0;
+		std::vector<double> resultVals(3);
+
+		// Randomize data sets
+		std::vector<int> indexes;
+		indexes.reserve(eSet.values.size());
+		for (int i = 0; i < eSet.values.size(); ++i)
+			indexes.push_back(i);
+		std::random_shuffle(indexes.begin(), indexes.end(), myrandom);
+
+		for (std::vector<int>::iterator it1 = indexes.begin(); it1 != indexes.end(); ++it1) {
+			m_nn->feedForward(eSet.values[*it1]);
+			m_nn->getResults(resultVals);
+
+			int targetClass = DataReader::convert_to_class(eSet.targets[*it1]);
+			int result = DataReader::convert_to_class(resultVals);
+			if (targetClass != result) {
+				++err_count;
+			}
+		}
+
+		return err_count;
 	}
 }

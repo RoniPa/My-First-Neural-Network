@@ -66,8 +66,8 @@ namespace nrt {
 
 		SingleSet result;
 		result.dataCount = rows - 1;
-		result.values = convert_to_matrix<double>(rows, cols, data);
-		result.targets = convert_to_matrix<double>(rows, cols, target);
+		result.values = data;
+		result.targets = target;
 		return result;
 	}
 
@@ -92,7 +92,10 @@ namespace nrt {
 		double curr_max = 0;
 		int max_ind = 0;
 		for (int i = output.size() - 1; i >= 0; i--) {
-			if (curr_max < output[i]) max_ind = i;
+			if (curr_max < output[i]) {
+				curr_max = output[i];
+				max_ind = i;
+			}
 		}
 
 		return max_ind == 2 ? 0b001 : max_ind == 1 ? 0b010 : 0b100;

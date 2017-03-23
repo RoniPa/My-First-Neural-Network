@@ -3,6 +3,8 @@
 #include "Types.h"
 #include "NeuralNetwork.h"
 #include <iostream>
+#include <algorithm>
+#include <random>
 
 // Set defaults
 #define MAX_EPOCHS 1500
@@ -30,5 +32,6 @@ namespace nrt {
 		double m_desiredAccuracy;
 
 		void m_runTrainingEpoch(const SingleSet &eSet);
+		int m_runValidationEpoch(const SingleSet &eSet);
 	};
 }
