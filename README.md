@@ -1,1 +1,1 @@
-Uses [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page)
+Neural Network implementation with the iris data set
