@@ -34,9 +34,9 @@ namespace nrt {
 				((double)tData->training.dataCount + (double)tData->validation.dataCount)
 				* 100;
 		} while (
-			m_epoch < MAX_EPOCHS && 
-			m_nn->getError() > DESIRED_MSE &&
-			accuracy < DESIRED_ACCURACY
+			m_epoch < MAX_EPOCHS 
+			&& m_nn->getError() > DESIRED_MSE 
+			&& accuracy < DESIRED_ACCURACY
 		);
 
 		std::cout << "\n\nINITIAL RESULTS WITH VALIDATION DATA\n------------------------------\n";
