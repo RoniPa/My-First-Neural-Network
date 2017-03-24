@@ -1,14 +1,32 @@
 #include "NeuralNetwork.h"
 
-#define BIAS 1.0
+#define BIAS -1.0
 
 namespace nrt {
 	using namespace Eigen;
 
+	std::vector<std::vector<double>> NeuralNetwork::getWeights() const
+	{
+		std::vector<std::vector<double>> netWeights;
+
+		for (unsigned i = 0; i < m_layers.size(); ++i) {
+			for (unsigned n = 0; n < m_layers[i].size(); ++n) {
+				std::vector<Connection> nWeights = m_layers[i][n].getWeights();
+				std::vector<double> nOutputWeights;
+
+				for (unsigned j = 0; j < nWeights.size(); ++j) {
+					nOutputWeights.push_back(nWeights[j].weight);
+				}
+				netWeights.push_back(nOutputWeights);
+			}
+		}
+		return netWeights;
+	}
+
 	void NeuralNetwork::getResults(std::vector<double> &resultVals) const
 	{
 		for (unsigned n = 0; n < m_layers.back().size() - 1; ++n) {
-			resultVals[n] = m_layers.back()[n].getOutputVal();
+			resultVals[n] = abs(m_layers.back()[n].getOutputVal());
 		}
 	}
 

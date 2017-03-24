@@ -26,6 +26,7 @@ namespace nrt {
 		void calcOutputGradients(double targetVal);
 		void calcHiddenGradients(const Layer &nextLayer);
 		void updateInputWeights(Layer &prevLayer);
+		std::vector<Connection> getWeights() const { return m_outputWeights; };
 
 	private:
 		static double activationFunc(double x);

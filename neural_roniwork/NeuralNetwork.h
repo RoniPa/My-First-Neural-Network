@@ -15,6 +15,7 @@ namespace nrt {
 		void backProp(const std::vector<double> &targetVals);
 		void getResults(std::vector<double> &resultVals) const;
 		double getError() const { return m_error; };
+		std::vector<std::vector<double>> getWeights() const;
 
 	private:
 		std::vector<Layer> m_layers; // m_layers[layerNum][neuronNum]

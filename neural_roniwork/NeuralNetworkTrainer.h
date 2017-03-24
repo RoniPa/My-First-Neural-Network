@@ -3,7 +3,9 @@
 #include "Types.h"
 #include "NeuralNetwork.h"
 #include <iostream>
+#include <iomanip>
 #include <algorithm>
+#include <bitset>
 #include <random>
 
 // Set defaults
@@ -31,7 +33,7 @@ namespace nrt {
 		//accuracy/MSE required
 		double m_desiredAccuracy;
 
-		int m_runTrainingEpoch(const SingleSet &eSet);
-		int m_runValidationEpoch(const SingleSet &eSet);
+		int m_runTraining(const SingleSet &eSet);
+		int m_runValidation(const SingleSet &eSet, bool verbose = true);
 	};
 }

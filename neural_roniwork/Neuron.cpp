@@ -1,6 +1,7 @@
 #include "Neuron.h"
 
 #define LEARNING_RATE 0.08
+// #define LEARNING_RATE 0.015
 #define MOMENTUM 0.5
 
 namespace nrt {
@@ -57,7 +58,7 @@ namespace nrt {
 	double Neuron::activationFunc(double x)
 	{
 		// hyperbolic tangent - output range [-1.0 ... 1.0]
-		return tanh(x);
+		return floor(tanh(x) * 10000 + 0.5) / 10000;
 	}
 
 	double Neuron::activationFuncDerivative(double x)
