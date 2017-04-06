@@ -8,7 +8,6 @@
 #include "Types.h"
 
 namespace nrt {
-	using namespace Eigen;
 
 	class DataReader {
 	public:
@@ -19,6 +18,4 @@ namespace nrt {
 		SingleSet readSingle(std::string f_uri);
 	};
 
-	template<typename T = typename std::enable_if<std::is_arithmetic<T>::value, T>::type>
-	MatrixXd convert_to_matrix(int cols, int rows, std::vector<std::vector<T>> raw_data);
 }

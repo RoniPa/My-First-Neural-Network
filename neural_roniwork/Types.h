@@ -1,10 +1,8 @@
 #pragma once
 
-#include <Eigen/Dense>
 #include <vector>
 
 namespace nrt {
-	using namespace Eigen;
 
 	struct SingleSet {
 		unsigned int dataCount;

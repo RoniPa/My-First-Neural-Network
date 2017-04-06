@@ -71,21 +71,6 @@ namespace nrt {
 		return result;
 	}
 
-	template<typename T>
-	MatrixXd convert_to_matrix(int rows, int cols, std::vector<std::vector<T>> raw_data) {
-		static_assert(std::is_arithmetic<T>::value, "NumericType must be numeric");
-
-		MatrixXd output(rows, cols);
-
-		for (std::vector<std::vector<T>>::const_iterator i = raw_data.begin(); i != raw_data.end(); ++i) {
-			int curr_row = i - raw_data.begin();
-			for (std::vector<T>::const_iterator j = i->begin(); j != i->end(); ++j)
-				output(curr_row, j - i->begin()) = *j;
-		}
-
-		return output;
-	}
-
 	// Conversion from raw value vector to class
 	int DataReader::convert_to_class(const std::vector<double> output)
 	{

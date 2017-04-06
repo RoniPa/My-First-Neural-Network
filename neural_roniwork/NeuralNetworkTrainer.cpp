@@ -20,7 +20,7 @@ namespace nrt {
 
 		m_epoch = 0;
 
-		int initial_err_count = m_runValidation(tData->test);
+		int initial_err_count = m_runValidation(tData->test, false);
 		double initial_error = m_nn->getError();
 
 		int errCount1, errCount2;

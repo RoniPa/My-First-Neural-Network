@@ -3,7 +3,6 @@
 #include <vector>
 #include <iostream>
 #include <cassert>
-#include <Eigen/Dense>
 #include "Neuron.h"
 
 namespace nrt {

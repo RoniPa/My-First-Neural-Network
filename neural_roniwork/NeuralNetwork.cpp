@@ -3,7 +3,6 @@
 #define BIAS -1.0
 
 namespace nrt {
-	using namespace Eigen;
 
 	std::vector<std::vector<double>> NeuralNetwork::getWeights() const
 	{
@@ -102,7 +101,6 @@ namespace nrt {
 			// Add neurons to layer, and bias neuron
 			for (unsigned neuronNum = 0; neuronNum <= topology[layerNum]; ++neuronNum) {
 				m_layers.back().push_back(Neuron(numOutputs, neuronNum));
-				std::cout << "Neuron created" << std::endl;
 			}
 
 			// Force bias node's output value to constant
