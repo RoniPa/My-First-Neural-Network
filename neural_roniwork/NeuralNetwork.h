@@ -6,6 +6,7 @@
 #include "Neuron.h"
 
 namespace nrt {
+
 	class NeuralNetwork
 	{
 	public:

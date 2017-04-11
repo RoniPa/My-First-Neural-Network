@@ -19,12 +19,9 @@ namespace nrt {
 
 			double newDeltaWeight =
 				// Individual input, magnified by the gradient and learning rate:
-				Neuron::eta
-				* neuron.getOutputVal()
-				* m_gradient
+				Neuron::eta * neuron.getOutputVal() * m_gradient
 				// Also add momentum = a fraction of the previous delta weight
-				+ Neuron::alpha
-				* oldDeltaWeight;
+				+ Neuron::alpha * oldDeltaWeight;
 
 			neuron.m_outputWeights[m_myIndex].deltaWeight = newDeltaWeight;
 			neuron.m_outputWeights[m_myIndex].weight += newDeltaWeight;
@@ -49,6 +46,7 @@ namespace nrt {
 		m_gradient = dow * Neuron::activationFuncDerivative(m_outputVal);
 	}
 
+	// Use mean squared error to count the cost
 	void Neuron::calcOutputGradients(double targetVal)
 	{
 		double delta = targetVal - m_outputVal;
@@ -78,6 +76,7 @@ namespace nrt {
 		m_outputVal = Neuron::activationFunc(sum);
 	}
 
+	// Constructor
 	Neuron::Neuron(unsigned numOutputs, unsigned myIndex)
 	{
 		for (unsigned c = 0; c < numOutputs; ++c) {

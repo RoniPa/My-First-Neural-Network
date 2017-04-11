@@ -10,7 +10,7 @@
 
 // Set defaults
 #define MAX_EPOCHS 1500
-#define DESIRED_ACCURACY 90  
+#define DESIRED_ACCURACY 95  
 #define DESIRED_MSE 0.008
 
 namespace nrt {

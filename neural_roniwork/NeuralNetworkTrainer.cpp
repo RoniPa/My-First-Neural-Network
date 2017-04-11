@@ -27,6 +27,7 @@ namespace nrt {
 		double accuracy1, accuracy2;
 		double tSize = (double)tData->training.dataCount;
 		double vSize = (double)tData->validation.dataCount;
+		unsigned max_validation_err = (100 - DESIRED_ACCURACY);
 
 		do { ++m_epoch;
 			std::cout << "-----------------" << std::endl;
@@ -41,8 +42,8 @@ namespace nrt {
 		} while (
 			m_epoch < MAX_EPOCHS 
 			&& m_nn->getError() > DESIRED_MSE 
-			&& (accuracy1 < DESIRED_ACCURACY
-			|| accuracy2 < DESIRED_ACCURACY)
+			&& (accuracy1 > max_validation_err
+			|| accuracy2 > max_validation_err)
 		);
 
 		std::cout << std::endl << "=========================================================================="

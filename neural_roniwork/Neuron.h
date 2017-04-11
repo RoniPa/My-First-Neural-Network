@@ -18,7 +18,7 @@ namespace nrt {
 	{
 	public:
 		static const double eta;	// Overall NeuralNetwork training rate [0.0 ... 1.0]
-		static const double alpha;		// Multiplier of last weight change (momentum) [0.0 ... n]
+		static const double alpha;	// Multiplier of last weight change (momentum) [0.0 ... n]
 		Neuron(unsigned numOutputs, unsigned myIndex);
 		void setOutputVal(double val) { m_outputVal = val; };
 		double getOutputVal(void) const { return m_outputVal; };
