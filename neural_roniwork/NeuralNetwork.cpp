@@ -22,17 +22,31 @@ namespace nrt {
 		return netWeights;
 	}
 
+	inline double bval(const std::vector<Layer> l, unsigned i) {
+		return l.back()[i].getOutputVal();
+	}
 	void NeuralNetwork::getResults(std::vector<double> &resultVals) const
 	{
+		// Softmax with overflow prevention
+		double max = -std::numeric_limits<double>::infinity();
+		for (unsigned n = 0; n < m_layers.back().size() - 1; ++n)
+			if (bval(m_layers, n) > max)
+				max = bval(m_layers, n);
+
+		double Z = 0.0;
+		for (unsigned n = 0; n < m_layers.back().size() - 1; ++n)
+			Z += exp(bval(m_layers, n) - max);
+		
 		for (unsigned n = 0; n < m_layers.back().size() - 1; ++n) {
-			resultVals[n] = abs(m_layers.back()[n].getOutputVal());
+			resultVals[n] = exp(bval(m_layers, n) - max) / Z;
 		}
 	}
 
 	void NeuralNetwork::backProp(const std::vector<double> &targetVals)
 	{
-		// Calculate overall NeuralNetwork error (RMS of output neuron errors)
 		Layer &outputLayer = m_layers.back();
+
+		// Calculate overall NeuralNetwork error (RMS of output neuron errors)
 		m_error = 0.0;
 
 		for (unsigned n = 0; n < outputLayer.size() - 1; ++n) {
@@ -42,7 +56,7 @@ namespace nrt {
 		m_error /= outputLayer.size() - 1; // Squared average error
 		m_error = sqrt(m_error); // RMS (Root mean square)
 
-		// Recent average measurement
+								 // Recent average measurement
 		m_recentAverageError =
 			(m_recentAverageError * m_recentAverageSmoothingFactor + m_error)
 			/ (m_recentAverageSmoothingFactor + 1.0);

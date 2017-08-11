@@ -96,7 +96,7 @@ namespace nrt {
 				++err_count;
 
 				std::cout << "Target: " << targetClass << " | Result: " << result;
-				std::cout << " | Output:"
+				std::cout << " | Output probabilities:"
 					<< std::setw(7) << resultVals[0] << "\t"
 					<< std::setw(7) << resultVals[1] << "\t"
 					<< std::setw(7) << resultVals[2] << std::endl;
@@ -139,7 +139,7 @@ namespace nrt {
 
 			if (verbose) {
 				std::bitset<3> x(targetClass);
-				std::cout << "Target: " << x << " | Output: "
+				std::cout << "Target: " << x << " | Output probabilities: "
 					<< std::setw(7) << resultVals[0] << "\t"
 					<< std::setw(7) << resultVals[1] << "\t"
 					<< std::setw(7) << resultVals[2] << std::endl;
